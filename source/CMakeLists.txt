@@ -6,3 +6,5 @@ add_library(
         path_finder.h path_finder.cpp
         cone_of_vision.h cone_of_vision.cpp
 )
+
+target_include_directories(navmesh PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
