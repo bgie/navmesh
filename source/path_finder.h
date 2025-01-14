@@ -31,6 +31,10 @@ namespace NavMesh {
 		// points must be first added via AddExternalPoints().
 		std::vector<Point> GetPath(const Point& start_coord, const Point& dest_coord);
 
+		// Get shortest path between a starting points and the nearest of multiple destination points.
+		// points must be first added via AddExternalPoints().
+		std::vector<Point> GetPath(const Point& start_coord, const std::vector<Point>& dest_coords);
+
 		// For debugging. Returns all the edges in the graph.
 		std::vector<Segment> GetEdgesForDebug() const;
 	private:

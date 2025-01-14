@@ -175,10 +175,6 @@ namespace NavMesh {
 		std::vector<bool> done(v_.size(), false);
 		std::priority_queue<std::pair<double, int>> queue;
 
-		if (polygons_.size() > 0) {
-			start = start;
-		}
-
 		dist[start] = 0;
 		est[start] = (v_[dest] - v_[start]).Len();
 		queue.push(std::make_pair(-est[start], start));
@@ -210,6 +206,62 @@ namespace NavMesh {
 		}
 		res.push_back(v_[start]);
 		std::reverse(res.begin(), res.end());
+		return res;
+	}
+
+	std::vector<Point> PathFinder::GetPath(const Point& start_coord, const std::vector<Point>& dest_coords)
+	{
+		int start = GetVertex(start_coord);
+		std::vector<int> dests;
+		dests.reserve(dest_coords.size());
+		for (auto dest_coord : dest_coords) {
+			int dest = GetVertex(dest_coord);
+			if (start == dest) return { start_coord };
+			dests.push_back(dest);
+		}
+
+		// Run A*.
+		std::vector<int> prev(v_.size(), -1);
+		std::vector<double> dist(v_.size(), -1.0);
+		std::vector<double> est(v_.size(), -1.0);
+		std::vector<bool> done(v_.size(), false);
+		std::priority_queue<std::pair<double, int>> queue;
+
+		// Reverse search order: from multiple destinations to start
+		// Also avoids reversing the found path when returning results
+		for (auto dest : dests) {
+			dist[dest] = 0;
+			est[dest] = (v_[start] - v_[dest]).Len();
+			queue.push(std::make_pair(-est[dest], dest));
+		}
+
+		while (!queue.empty()) {
+			int bst = queue.top().second;
+			queue.pop();
+			if (done[bst]) continue;
+			done[bst] = true;
+			if (bst == start) break;
+			for (const auto& e : edges_[bst]) {
+				if (dist[e.first] < 0 || dist[e.first] > dist[bst] + e.second) {
+					dist[e.first] = dist[bst] + e.second;
+					est[e.first] = dist[e.first] + (v_[start] - v_[e.first]).Len();
+					// Put negative distance esimate since the queue is for maximum and we 
+					// need minimum.
+					queue.push(std::make_pair(-est[e.first], e.first));
+					prev[e.first] = bst;
+				}
+			}
+		}
+
+		if (prev[start] == -1) return {};
+
+		std::vector<Point> res;
+		int u = start;
+		while (std::find(dests.begin(), dests.end(), u) == dests.end()) {
+			res.push_back(v_[u]);
+			u = prev[u];
+		}
+		res.push_back(v_[u]);
 		return res;
 	}
 
