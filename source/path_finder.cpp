@@ -9,9 +9,13 @@ namespace NavMesh {
 	void PathFinder::AddPolygons(const std::vector<Polygon>& polygons_to_add, int inflate_by = 0)
 	{
 		polygons_.clear();
-		v_.clear();
-		edges_.clear();
+		ext_points_.clear();
+		free_vertices_.clear();
 		vertex_ids_.clear();
+		v_.clear();
+		polygon_point_is_inside_.clear();
+		edges_.clear();
+
 		polygons_.reserve(polygons_to_add.size());
 		for (auto const& p : polygons_to_add) {
 			polygons_.emplace_back(p.Inflate(inflate_by));
