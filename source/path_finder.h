@@ -25,7 +25,11 @@ namespace NavMesh {
 		// Call any time after AddPolygons().
 		// It removes previously added external points and adds
 		// |points| to the graph.
-	  void AddExternalPoints(const std::vector<Point>& points_);
+		void AddExternalPoints(const std::vector<Point>& points_);
+
+		// Call after AddExternalPoints().
+		// Force adds a segment to the graph, ignoring collision polygons.
+		void ForceAddSegment(const Point & a, const Point & b);
 
 		// Get shortest path between two points.
 		// points must be first added via AddExternalPoints().

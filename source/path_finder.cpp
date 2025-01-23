@@ -165,6 +165,13 @@ namespace NavMesh {
 		}
 	}
 
+	void PathFinder::ForceAddSegment(const Point & a, const Point & b)
+	{
+		ext_points_.push_back(a);
+		ext_points_.push_back(b);
+		AddEdge(GetVertex(a), GetVertex(b));
+	}
+
 	std::vector<Point> PathFinder::GetPath(const Point& start_coord, const Point& dest_coord)
 	{
 		int start = GetVertex(start_coord);
